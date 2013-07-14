@@ -1,0 +1,40 @@
+{
+    "admin": {
+        "bind": "127.0.0.1:11234",
+        "password": "brftl6hbd16d51mkmc3z93t7s474p3x"
+    },
+    "authorizedPasswords": [
+        {
+            "password": "ktk73fdm4447hrqgftc11496r4f0cv5"
+        }
+    ],
+    "interfaces": {
+        "UDPInterface": [
+            {
+                "bind": "0.0.0.0:41003",
+                "connectTo": {}
+            }
+        ]
+    },
+    "ipv6": "fc23:97dc:f6c4:219c:d768:cfa6:03f0:2927",
+    "logging": {},
+    "privateKey": "8ca9d72915ea0441fe7453264aca5ec49da1543f6badf7cb3964064f43b7c5da",
+    "publicKey": "5g66f9qcrf01ms2jnsyvqlwm5hpkqpsgw2d18lfwl34m3n9bky50.k",
+    "resetAfterInactivitySeconds": 100,
+    "router": {
+        "interface": {
+            "type": "TUNInterface"
+        },
+        "ipTunnel": {
+            "allowedConnections": [],
+            "outgoingConnections": []
+        }
+    },
+    "security": [
+        "nofiles",
+        {
+            "exemptAngel": 1,
+            "setuser": "nobody"
+        }
+    ]
+}
