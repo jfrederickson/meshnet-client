@@ -1,3 +1,22 @@
+#===============================================================================
+#    Copyright 2013 Jonathan Frederickson
+#
+#     This file is part of meshnet-client.
+# 
+#     Meshnet-client is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+# 
+#     Meshnet-client is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with meshnet-client.  If not, see <http://www.gnu.org/licenses/>.
+#===============================================================================
+
 from cjdnsadmin.cjdnsadmin import connect
 import json
 import socket
@@ -30,7 +49,7 @@ class AdminInterface:
                 ip = v4+':'+port
                 peer = dict([(ip, dict([('password', pw), ('publicKey', key)]))])
                 
-                self.cjdns.UDPInterface_beginConnection(0, pw, key, ip)
+                self.cjdns.UDPInterface_beginConnection(1, pw, key, ip)
                 return True
             else:
                 return 'Invalid Port' # TODO: Actual error handling (learning more python)

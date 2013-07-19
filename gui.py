@@ -1,26 +1,61 @@
+#===============================================================================
+#    Copyright 2013 Jonathan Frederickson
+#
+#     This file is part of meshnet-client.
+# 
+#     Meshnet-client is free software: you can redistribute it and/or modify
+#     it under the terms of the GNU General Public License as published by
+#     the Free Software Foundation, either version 3 of the License, or
+#     (at your option) any later version.
+# 
+#     Meshnet-client is distributed in the hope that it will be useful,
+#     but WITHOUT ANY WARRANTY; without even the implied warranty of
+#     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#     GNU General Public License for more details.
+# 
+#     You should have received a copy of the GNU General Public License
+#     along with meshnet-client.  If not, see <http://www.gnu.org/licenses/>.
+#===============================================================================
+
 import sys
 from PyQt4 import QtGui
 from PyQt4 import uic
 from admin import AdminInterface
+from socket import error as socket_error
     
 class MainWindow(QtGui.QMainWindow):
+    
+    ui = None
     
     def __init__(self):
         super(MainWindow, self).__init__()
         global admin
-        admin = AdminInterface()
         self.initUI()
         
     def initUI(self):
-        ui = uic.loadUi('mainwindow.ui', self)
+        self.ui = uic.loadUi('mainwindow.ui', self)
         self.setWindowIcon(QtGui.QIcon('marylandmesh.png'))
         self.show()
-        ui.actionAdd_Peer.triggered.connect(self.addPeer)
+        self.ui.actionAdd_Peer.triggered.connect(self.addPeer)
+        self.ui.actionAdd_Peer.setEnabled(False)
+        self.ui.actionStart.triggered.connect(self.connectAdmin)
+        self.ui.actionStop.triggered.connect(self.disconnectAdmin)
     
     def addPeer(self):
         peerWindow = AddPeerWindow()
         peerWindow.setModal(True)
         peerWindow.exec_()
+        
+    def connectAdmin(self):
+        try:
+            admin = AdminInterface()
+            self.ui.actionAdd_Peer.setEnabled(True)
+        except socket_error as serr:
+            print "Failed to connect to admin interface.  Is cjdns running?"
+            
+    def disconnectAdmin(self):
+        admin = None
+        self.ui.actionAdd_Peer.setEnabled(False)
 
 class AddPeerWindow(QtGui.QDialog):
     
@@ -49,7 +84,6 @@ class AddPeerWindow(QtGui.QDialog):
         
     def addPeerFromJson(self):
         print 'stuff'
-        
         
 
 def main():

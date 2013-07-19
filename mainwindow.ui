@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout" name="gridLayout">
     <item row="0" column="0">
-     <widget class="QListWidget" name="listWidget"/>
+     <widget class="QListView" name="listView"/>
     </item>
    </layout>
   </widget>
@@ -29,9 +29,9 @@
      <height>22</height>
     </rect>
    </property>
-   <widget class="QMenu" name="menuNetwork">
+   <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>Network</string>
+     <string>File</string>
     </property>
     <addaction name="actionStart"/>
     <addaction name="actionStop"/>
@@ -51,7 +51,7 @@
     <addaction name="actionAbout_meshnet_client"/>
     <addaction name="actionAbout_Qt"/>
    </widget>
-   <addaction name="menuNetwork"/>
+   <addaction name="menuFile"/>
    <addaction name="menuSettings"/>
    <addaction name="menuHelp"/>
   </widget>
@@ -70,12 +70,12 @@
   </widget>
   <action name="actionStart">
    <property name="text">
-    <string>Start</string>
+    <string>Connect</string>
    </property>
   </action>
   <action name="actionStop">
    <property name="text">
-    <string>Stop</string>
+    <string>Disconnect</string>
    </property>
   </action>
   <action name="actionEdit_Config">
