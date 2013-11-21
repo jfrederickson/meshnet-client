@@ -54,7 +54,9 @@ class MainWindow(QtGui.QMainWindow):
             admin = AdminInterface()
             self.ui.actionAdd_Peer.setEnabled(True)
         except socket_error as serr:
-            error = ErrorWindow(self, 'Error', 'Unable to connect to admin interface.  Is cjdns running?')
+            ErrorWindow(self, 'Error', 'Unable to connect to admin interface. Is cjdns running?')
+        except IOError as io:
+            ErrorWindow(self, 'Error', 'Could not read cjdroute.conf. Have you run cleanconf?')
             
             
     def disconnectAdmin(self):

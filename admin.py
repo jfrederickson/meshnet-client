@@ -20,18 +20,33 @@
 from cjdnsadmin.cjdnsadmin import connect
 import json
 import socket
+import os
+from error import ErrorWindow
 
 class AdminInterface:
+    admin = None
     conf = None
     cjdns = None
-    confpath = '/etc/cjdroute-dev.conf' # TODO: Better way of finding this
+    adminpath = os.getenv("HOME") + '/.cjdnsadmin'
     
     def __init__(self):
-        f = open(self.confpath)
-        self.conf = json.loads(f.read())
-        adminpass = self.conf['admin']['password']
-        adminport = int(((self.conf['admin']['bind']).split(":"))[1])
-        self.cjdns = connect('127.0.0.1', adminport, adminpass);
+        # Load .cjdnsadmin
+        f = open(self.adminpath)
+        self.admin = json.loads(f.read())
+        adminpass = self.admin['password']
+        adminport = int(self.admin['port'])
+        f.close()
+        
+        # Load cjdroute.conf
+        f = open(self.admin['config'])
+        try:
+            self.conf = json.loads(f.read())
+            # Only connect to cjdns if we can read the config file.
+            # We really could connect here, but then we couldn't update
+            # cjdroute.conf so let's not confuse the user. 
+            self.cjdns = connect(self.admin['addr'], adminport, adminpass)
+        except ValueError:
+            raise IOError
         f.close()
         
     def functions(self, cjdns):
