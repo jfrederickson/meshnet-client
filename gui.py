@@ -1,3 +1,4 @@
+#!/usr/bin/env python2
 #===============================================================================
 #    Copyright 2013 Jonathan Frederickson
 #
@@ -19,8 +20,10 @@
 
 import sys
 from PyQt4 import QtGui
+from PyQt4 import QtCore
 from PyQt4 import uic
 from admin import AdminInterface
+from error import ErrorWindow
 from socket import error as socket_error
     
 class MainWindow(QtGui.QMainWindow):
@@ -51,7 +54,8 @@ class MainWindow(QtGui.QMainWindow):
             admin = AdminInterface()
             self.ui.actionAdd_Peer.setEnabled(True)
         except socket_error as serr:
-            print "Failed to connect to admin interface.  Is cjdns running?"
+            error = ErrorWindow(self, 'Error', 'Unable to connect to admin interface.  Is cjdns running?')
+            
             
     def disconnectAdmin(self):
         admin = None
@@ -83,7 +87,7 @@ class AddPeerWindow(QtGui.QDialog):
         admin.addPeer(key, pw, v4, port)
         
     def addPeerFromJson(self):
-        print 'stuff'
+        print('stuff')
         
 
 def main():
