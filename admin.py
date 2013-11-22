@@ -20,6 +20,7 @@
 from cjdnsadmin.cjdnsadmin import connect
 import json
 import socket
+import sys
 import os
 from error import ErrorWindow
 
@@ -53,17 +54,16 @@ class AdminInterface:
         print(routes)
         
     def __save(self):
-        f = open(self.admin['config'], 'w')
-        f.write(json.dumps(self.conf, sort_keys=True, indent=4))
-        f.close()
+        with open(self.admin['config'], 'w') as f:
+            f.write(json.dumps(self.conf, sort_keys=True, indent=4))
         
     def addPeer(self, key, pw, v4, port):
         """Adds a peer with the given info and updates config"""
         if(int(port) >= 0 and int(port) <= 65535):
             ip = v4+':'+port
             try:
-                self.__adminAddPeer(key, pw, ip)
-                self.__confAddPeer(key, pw, ip)
+                if(self.__adminAddPeer(key, pw, ip)):
+                    self.__confAddPeer(key, pw, ip)
             except socket.error as e:
                 raise e
         else:
@@ -72,8 +72,11 @@ class AdminInterface:
     def __adminAddPeer(self, key, pw, ip):
         """Adds a peer through the admin interface"""
         try:
-            print(self.cjdns.UDPInterface_beginConnection(0, pw, key, ip))
-            return True
+            result = self.cjdns.UDPInterface_beginConnection(key, ip, 0, pw)
+            if(result['error'] == 'none'):
+                return True
+            sys.stderr.write(result + '\n')
+            return False
         except socket.error as e:
             return False
             raise e
@@ -82,14 +85,13 @@ class AdminInterface:
         """Adds a peer to the config file"""
         peer = dict([('password', pw), ('publicKey', key)])
         self.conf['interfaces']['UDPInterface'][0]['connectTo'][ip] = peer
-        self.save()
+        self.__save()
         
     def addJSON(self, peerstring):
         data = json.loads('{' + peerstring + '}')
-        ip = data.keys()[0]
-        pw = data[ip]['password']
-        key = data[ip]['publicKey']
-        #if(self.__adminAddPeer(key, pw, ip)):
-            
-        #self.conf['interfaces']['UDPInterface'][0]['connectTo'].update(data)
-        #print(self.conf)
+        ip = str(data.keys()[0])
+        pw = str(data[ip]['password'])
+        key = str(data[ip]['publicKey'])
+        if(self.__adminAddPeer(key, pw, ip)):
+            self.conf['interfaces']['UDPInterface'][0]['connectTo'].update(data)
+            self.__save()

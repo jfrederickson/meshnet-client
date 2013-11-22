@@ -59,7 +59,6 @@ class MainWindow(QtGui.QMainWindow):
         except ValueError:
             ErrorWindow(self, 'Error', 'Could not read cjdroute.conf. Have you run cleanconf?')
             
-            
     def disconnectAdmin(self):
         global admin
         admin = None
@@ -114,7 +113,10 @@ class AddJSON(QtGui.QDialog):
     def __addJSON(self):
         global admin
         peer = str(self.ui.plainTextEdit.toPlainText())
-        admin.addJSON(peer)
+        try:
+            admin.addJSON(peer)
+        except ValueError:
+            ErrorWindow(self, 'Error', 'Invalid peer info')
         
         
 
