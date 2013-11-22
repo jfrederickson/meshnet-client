@@ -17,10 +17,8 @@
 #     along with meshnet-client.  If not, see <http://www.gnu.org/licenses/>.
 #===============================================================================
 
-import sys
 from PyQt4 import QtGui
 from PyQt4 import QtCore
-from PyQt4 import uic
 
 class ErrorWindow(QtGui.QMessageBox):
     

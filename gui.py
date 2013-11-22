@@ -25,15 +25,14 @@ from PyQt4 import uic
 from admin import AdminInterface
 from error import ErrorWindow
 from socket import error as socket_error
-import json
     
 class MainWindow(QtGui.QMainWindow):
     
     ui = None
+    admin = None
     
     def __init__(self):
         super(MainWindow, self).__init__()
-        global admin
         self.initUI()
         
     def initUI(self):
@@ -52,15 +51,17 @@ class MainWindow(QtGui.QMainWindow):
         
     def connectAdmin(self):
         try:
+            global admin
             admin = AdminInterface()
             self.ui.actionAdd_Peer.setEnabled(True)
-        except socket_error as serr:
+        except socket_error:
             ErrorWindow(self, 'Error', 'Unable to connect to admin interface. Is cjdns running?')
-        except IOError as io:
+        except ValueError:
             ErrorWindow(self, 'Error', 'Could not read cjdroute.conf. Have you run cleanconf?')
             
             
     def disconnectAdmin(self):
+        global admin
         admin = None
         self.ui.actionAdd_Peer.setEnabled(False)
 
@@ -80,6 +81,7 @@ class AddPeerWindow(QtGui.QDialog):
         self.ui.advButton.released.connect(self.jsonWindow)
         
     def addPeer(self):
+        global admin
         name = str(self.ui.nameField.text())
         key = str(self.ui.keyField.text())
         pw = str(self.ui.passField.text())
@@ -107,12 +109,13 @@ class AddJSON(QtGui.QDialog):
         self.setWindowIcon(QtGui.QIcon('marylandmesh.png'))
         self.setWindowTitle('Advanced')
         self.ui = uic.loadUi('json.ui', self)
-        self.ui.accepted.connect(self.__parseJSON)
+        self.ui.accepted.connect(self.__addJSON)
         
-    def __parseJSON(self):
+    def __addJSON(self):
+        global admin
         peer = str(self.ui.plainTextEdit.toPlainText())
-        #data = json.loads(peer)
-        print(peer)
+        admin.addJSON(peer)
+        
         
 
 def main():

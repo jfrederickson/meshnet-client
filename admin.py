@@ -27,27 +27,25 @@ class AdminInterface:
     admin = None
     conf = None
     cjdns = None
-    adminpath = os.getenv("HOME") + '/.cjdnsadmin'
+    adminpath = os.path.join(os.getenv("HOME"), '.cjdnsadmin')
     
     def __init__(self):
         # Load .cjdnsadmin
-        f = open(self.adminpath)
-        self.admin = json.loads(f.read())
-        adminpass = self.admin['password']
-        adminport = int(self.admin['port'])
-        f.close()
+        with open(self.adminpath) as f:
+            self.admin = json.loads(f.read())
+            adminpass = self.admin['password']
+            adminport = int(self.admin['port'])
         
         # Load cjdroute.conf
-        f = open(self.admin['config'])
-        try:
-            self.conf = json.loads(f.read())
-            # Only connect to cjdns if we can read the config file.
-            # We really could connect here, but then we couldn't update
-            # cjdroute.conf so let's not confuse the user. 
-            self.cjdns = connect(self.admin['addr'], adminport, adminpass)
-        except ValueError:
-            raise IOError
-        f.close()
+        with open(self.admin['config']) as f:
+            try:
+                self.conf = json.loads(f.read())
+                # Only connect to cjdns if we can read the config file.
+                # We really could connect here, but then we couldn't update
+                # cjdroute.conf so let's not confuse the user. 
+                self.cjdns = connect(self.admin['addr'], adminport, adminpass)
+            except ValueError as e:
+                raise e #TODO: Do something better here
         
     def functions(self, cjdns):
         cjdns.functions()
@@ -77,6 +75,7 @@ class AdminInterface:
             print(self.cjdns.UDPInterface_beginConnection(0, pw, key, ip))
             return True
         except socket.error as e:
+            return False
             raise e
         
     def __confAddPeer(self, key, pw, ip):
@@ -85,4 +84,12 @@ class AdminInterface:
         self.conf['interfaces']['UDPInterface'][0]['connectTo'][ip] = peer
         self.save()
         
-    
+    def addJSON(self, peerstring):
+        data = json.loads('{' + peerstring + '}')
+        ip = data.keys()[0]
+        pw = data[ip]['password']
+        key = data[ip]['publicKey']
+        #if(self.__adminAddPeer(key, pw, ip)):
+            
+        #self.conf['interfaces']['UDPInterface'][0]['connectTo'].update(data)
+        #print(self.conf)
