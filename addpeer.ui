@@ -10,14 +10,14 @@
     <x>0</x>
     <y>0</y>
     <width>367</width>
-    <height>432</height>
+    <height>245</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Add Peer</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
-   <item row="4" column="0">
+   <item row="2" column="0">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -85,26 +85,9 @@
     </layout>
    </item>
    <item row="1" column="0">
-    <widget class="QPushButton" name="pushButton">
+    <widget class="QPushButton" name="advButton">
      <property name="text">
       <string>Advanced</string>
-     </property>
-    </widget>
-   </item>
-   <item row="3" column="0">
-    <widget class="QPlainTextEdit" name="plainTextEdit">
-     <property name="minimumSize">
-      <size>
-       <width>0</width>
-       <height>200</height>
-      </size>
-     </property>
-    </widget>
-   </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="jsonLabel">
-     <property name="text">
-      <string>Paste JSON below:</string>
      </property>
     </widget>
    </item>
@@ -149,38 +132,6 @@
     <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>released()</signal>
-   <receiver>plainTextEdit</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>183</x>
-     <y>154</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>183</x>
-     <y>257</y>
-    </hint>
-   </hints>
-  </connection>
-  <connection>
-   <sender>pushButton</sender>
-   <signal>released()</signal>
-   <receiver>jsonLabel</receiver>
-   <slot>show()</slot>
-   <hints>
-    <hint type="sourcelabel">
-     <x>183</x>
-     <y>92</y>
-    </hint>
-    <hint type="destinationlabel">
-     <x>183</x>
-     <y>117</y>
     </hint>
    </hints>
   </connection>

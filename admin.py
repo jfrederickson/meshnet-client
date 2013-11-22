@@ -53,20 +53,36 @@ class AdminInterface:
         cjdns.functions()
         routes = cjdns.NodeStore_dumpTable(0)
         print(routes)
-    def save(self):
-        f = open(self.confpath, 'w')
+        
+    def __save(self):
+        f = open(self.admin['config'], 'w')
         f.write(json.dumps(self.conf, sort_keys=True, indent=4))
         f.close()
+        
     def addPeer(self, key, pw, v4, port):
+        """Adds a peer with the given info and updates config"""
+        if(int(port) >= 0 and int(port) <= 65535):
+            ip = v4+':'+port
+            try:
+                self.__adminAddPeer(key, pw, ip)
+                self.__confAddPeer(key, pw, ip)
+            except socket.error as e:
+                raise e
+        else:
+            raise ValueError('Invalid port number')
+        
+    def __adminAddPeer(self, key, pw, ip):
+        """Adds a peer through the admin interface"""
         try:
-            socket.inet_aton(v4)
-            if(int(port) >= 0 and int(port) <= 65535):
-                ip = v4+':'+port
-                peer = dict([(ip, dict([('password', pw), ('publicKey', key)]))])
-                
-                self.cjdns.UDPInterface_beginConnection(1, pw, key, ip)
-                return True
-            else:
-                return 'Invalid Port' # TODO: Actual error handling (learning more python)
-        except socket.error:
-            return 'Invalid IP address'
+            print(self.cjdns.UDPInterface_beginConnection(0, pw, key, ip))
+            return True
+        except socket.error as e:
+            raise e
+        
+    def __confAddPeer(self, key, pw, ip):
+        """Adds a peer to the config file"""
+        peer = dict([('password', pw), ('publicKey', key)])
+        self.conf['interfaces']['UDPInterface'][0]['connectTo'][ip] = peer
+        self.save()
+        
+    

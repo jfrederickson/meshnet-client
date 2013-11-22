@@ -25,6 +25,7 @@ from PyQt4 import uic
 from admin import AdminInterface
 from error import ErrorWindow
 from socket import error as socket_error
+import json
     
 class MainWindow(QtGui.QMainWindow):
     
@@ -69,15 +70,14 @@ class AddPeerWindow(QtGui.QDialog):
     
     def __init__(self):
         super(AddPeerWindow, self).__init__()
-        self.initUI()
+        self.__initUI()
         
-    def initUI(self):
+    def __initUI(self):
         self.setWindowIcon(QtGui.QIcon('marylandmesh.png'))
         self.setWindowTitle('Add Peer')
         self.ui = uic.loadUi('addpeer.ui', self)
         self.ui.accepted.connect(self.addPeer)
-        self.ui.plainTextEdit.setHidden(True)
-        self.ui.jsonLabel.setHidden(True)
+        self.ui.advButton.released.connect(self.jsonWindow)
         
     def addPeer(self):
         name = str(self.ui.nameField.text())
@@ -88,8 +88,31 @@ class AddPeerWindow(QtGui.QDialog):
         
         admin.addPeer(key, pw, v4, port)
         
+    def jsonWindow(self):
+        window = AddJSON()
+        window.setModal(True)
+        window.exec_()
+        
     def addPeerFromJson(self):
         print('stuff')
+        
+class AddJSON(QtGui.QDialog):
+    ui = None
+    
+    def __init__(self):
+        super(AddJSON, self).__init__()
+        self.__initUI()
+        
+    def __initUI(self):
+        self.setWindowIcon(QtGui.QIcon('marylandmesh.png'))
+        self.setWindowTitle('Advanced')
+        self.ui = uic.loadUi('json.ui', self)
+        self.ui.accepted.connect(self.__parseJSON)
+        
+    def __parseJSON(self):
+        peer = str(self.ui.plainTextEdit.toPlainText())
+        #data = json.loads(peer)
+        print(peer)
         
 
 def main():
