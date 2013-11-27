@@ -1,5 +1,6 @@
 #===============================================================================
 #    Copyright 2013 Jonathan Frederickson
+#    Copyright 2013 Joshua Haas
 #
 #     This file is part of meshnet-client.
 # 
@@ -22,6 +23,7 @@ import json
 import socket
 import sys
 import os
+import re
 from error import ErrorWindow
 
 class AdminInterface:
@@ -45,8 +47,11 @@ class AdminInterface:
                 # We really could connect here, but then we couldn't update
                 # cjdroute.conf so let's not confuse the user. 
                 self.cjdns = connect(self.admin['addr'], adminport, adminpass)
-            except ValueError as e:
-                raise e #TODO: Do something better here
+            except ValueError:
+                try:
+                    self.conf = json.loads(self.__stripComments(f))
+                except ValueError as e:
+                    raise e
         
     def functions(self, cjdns):
         cjdns.functions()
@@ -95,3 +100,22 @@ class AdminInterface:
         if(self.__adminAddPeer(key, pw, ip)):
             self.conf['interfaces']['UDPInterface'][0]['connectTo'].update(data)
             self.__save()
+            
+    def __stripComments(self, f):
+        lines = f.readlines()
+        
+        starts = []
+        ends = []
+        
+        for (i,line) in enumerate(lines):
+            if re.match("\A\s*/\*",line) is not None:
+                starts.append(i)
+            if re.match(".*\*/\s*\Z",line) is not None:
+                ends.append(i)
+        bad = []
+        for (s,e) in zip(starts,ends):
+            bad.extend(range(s,e+1))
+        lines = [line for (i,line) in enumerate(lines) if i not in bad]
+        
+        lines = [line for line in lines if re.match("\A\s*//",line) is None]
+        return ''.join(lines)
